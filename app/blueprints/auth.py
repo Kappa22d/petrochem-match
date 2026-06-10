@@ -10,12 +10,11 @@ def signup():
     """User signup."""
     if request.method == 'POST':
         email = request.form.get('email')
-        password = request.form.get('password')
         full_name = request.form.get('full_name')
         role = request.form.get('role')
         company = request.form.get('company')
         
-        if not all([email, password, full_name, role]):
+        if not all([email, full_name, role]):
             flash('All fields are required', 'danger')
             return redirect(url_for('auth.signup'))
         
@@ -48,16 +47,13 @@ def login():
     """User login."""
     if request.method == 'POST':
         email = request.form.get('email')
-        password = request.form.get('password')
-        
         profile = Profile.query.filter_by(email=email).first()
         if not profile:
-            flash('Email or password incorrect', 'danger')
+            flash('Email not found', 'danger')
             return redirect(url_for('auth.login'))
         
         session['user_id'] = str(profile.id)
         session['email'] = profile.email
-        
         flash(f'Welcome back, {profile.full_name}!', 'success')
         return redirect(url_for('main.index'))
     

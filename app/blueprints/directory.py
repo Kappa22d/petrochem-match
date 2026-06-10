@@ -1,14 +1,13 @@
 """Directory and search blueprint."""
-from flask import Blueprint, render_template, request, url_for
-from app.models import Profile, db
-from sqlalchemy import or_, and_
+from flask import Blueprint, render_template, request, url_for, jsonify
+from app.models import Profile
+from sqlalchemy import or_
 
 directory_bp = Blueprint('directory', __name__)
 
 
 @directory_bp.route('/')
 def index():
-    """Directory listing with search and filters."""
     query = request.args.get('q', '')
     role = request.args.get('role', '')
     location = request.args.get('location', '')
@@ -47,7 +46,6 @@ def index():
 
 @directory_bp.route('/search')
 def search():
-    """API endpoint for AJAX search."""
     query = request.args.get('q', '')
     results = Profile.query.filter(
         or_(
@@ -56,6 +54,6 @@ def search():
         )
     ).limit(10).all()
     
-    return {
+    return jsonify({
         'results': [{'id': str(p.id), 'name': p.full_name, 'company': p.company} for p in results]
-    }
+    })

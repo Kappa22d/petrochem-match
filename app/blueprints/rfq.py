@@ -1,14 +1,12 @@
-"""RFQ (Request for Quote) management blueprint."""
+"""RFQ management blueprint."""
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from app.models import RFQ, RFQResponse, Profile, db
 import uuid
-from datetime import datetime
 
 rfq_bp = Blueprint('rfq', __name__)
 
 
 def get_current_user():
-    """Get current logged-in user."""
     user_id = session.get('user_id')
     if user_id:
         return Profile.query.filter_by(id=uuid.UUID(user_id)).first()
@@ -17,7 +15,6 @@ def get_current_user():
 
 @rfq_bp.route('/')
 def list_rfqs():
-    """List all open RFQs."""
     page = request.args.get('page', 1, type=int)
     status = request.args.get('status', 'open')
     per_page = 10
@@ -32,7 +29,6 @@ def list_rfqs():
 
 @rfq_bp.route('/create', methods=['GET', 'POST'])
 def create_rfq():
-    """Create a new RFQ."""
     user = get_current_user()
     if not user:
         flash('Please log in first', 'warning')
@@ -67,7 +63,6 @@ def create_rfq():
 
 @rfq_bp.route('/<int:rfq_id>')
 def view_rfq(rfq_id):
-    """View a specific RFQ."""
     rfq = RFQ.query.filter_by(id=rfq_id).first()
     if not rfq:
         flash('RFQ not found', 'danger')
@@ -78,7 +73,6 @@ def view_rfq(rfq_id):
 
 @rfq_bp.route('/<int:rfq_id>/respond', methods=['POST'])
 def respond_to_rfq(rfq_id):
-    """Respond to an RFQ."""
     user = get_current_user()
     if not user:
         flash('Please log in first', 'warning')

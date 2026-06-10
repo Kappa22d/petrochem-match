@@ -8,7 +8,6 @@ matching_bp = Blueprint('matching', __name__)
 
 
 def get_current_user():
-    """Get current logged-in user."""
     user_id = session.get('user_id')
     if user_id:
         return Profile.query.filter_by(id=uuid.UUID(user_id)).first()
@@ -17,7 +16,6 @@ def get_current_user():
 
 @matching_bp.route('/find-matches')
 def find_matches():
-    """Find compatible matches for current user."""
     user = get_current_user()
     if not user:
         flash('Please log in first', 'warning')
@@ -42,7 +40,6 @@ def find_matches():
 
 @matching_bp.route('/save/<profile_id>', methods=['POST'])
 def save_match(profile_id):
-    """Save a match."""
     user = get_current_user()
     if not user:
         return jsonify({'error': 'Not authenticated'}), 401

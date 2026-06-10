@@ -1,19 +1,17 @@
 """Engineering tools and calculators blueprint."""
 from flask import Blueprint, render_template, request, jsonify
-import json
+from app.models import Chemical
 
 tools_bp = Blueprint('tools', __name__)
 
 
 @tools_bp.route('/esg-calculator')
 def esg_calculator():
-    """ESG/CO2 Savings Estimator."""
     return render_template('tools/esg_calculator.html')
 
 
 @tools_bp.route('/esg-calculator/calculate', methods=['POST'])
 def calculate_esg():
-    """Calculate ESG savings."""
     data = request.get_json()
     
     annual_usage_kg = float(data.get('annual_usage_kg', 0))
@@ -25,7 +23,7 @@ def calculate_esg():
     emissions_reduction = old_total_emissions - new_total_emissions
     reduction_percentage = (emissions_reduction / old_total_emissions * 100) if old_total_emissions > 0 else 0
     
-    co2_offset_trees = emissions_reduction / 21  # ~21 kg CO2 per tree per year
+    co2_offset_trees = emissions_reduction / 21
     
     return jsonify({
         'old_total_emissions': round(old_total_emissions, 2),
@@ -38,16 +36,13 @@ def calculate_esg():
 
 @tools_bp.route('/chemical-lookup')
 def chemical_lookup():
-    """Chemical property lookup tool."""
     return render_template('tools/chemical_lookup.html')
 
 
 @tools_bp.route('/chemical-lookup/search', methods=['GET'])
 def search_chemical():
-    """Search for chemical properties."""
     query = request.args.get('q', '')
     
-    from app.models import Chemical
     results = Chemical.query.filter(
         (Chemical.name.ilike(f'%{query}%')) |
         (Chemical.cas_number.ilike(f'%{query}%'))
@@ -60,13 +55,11 @@ def search_chemical():
 
 @tools_bp.route('/unit-converter')
 def unit_converter():
-    """SI to Imperial unit converter."""
     return render_template('tools/unit_converter.html')
 
 
 @tools_bp.route('/unit-converter/convert', methods=['POST'])
 def convert_units():
-    """Convert between SI and Imperial."""
     data = request.get_json()
     value = float(data.get('value', 0))
     from_unit = data.get('from_unit', '')
