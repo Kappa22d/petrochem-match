@@ -15,17 +15,14 @@ def signup():
         role = request.form.get('role')
         company = request.form.get('company')
         
-        # Validation
         if not all([email, password, full_name, role]):
             flash('All fields are required', 'danger')
             return redirect(url_for('auth.signup'))
         
-        # Check if user exists
         if Profile.query.filter_by(email=email).first():
             flash('Email already registered', 'danger')
             return redirect(url_for('auth.signup'))
         
-        # Create profile (in production, use Supabase Auth)
         profile = Profile(
             email=email,
             full_name=full_name,
@@ -39,7 +36,7 @@ def signup():
         session['user_id'] = str(profile.id)
         session['email'] = profile.email
         
-        flash(f'Welcome, {full_name}! Complete your profile.', 'success')
+        flash(f'Welcome, {full_name}!', 'success')
         return redirect(url_for('profile.complete_profile'))
     
     roles = ['operator', 'engineer', 'supplier', 'consultant']
