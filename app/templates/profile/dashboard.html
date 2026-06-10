@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - PetroChem Match{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <h1 class="text-4xl font-bold">Welcome, {{ user.full_name }}! 👋</h1>
+    
+    <!-- Quick Stats -->
+    <div class="grid grid-cols-3 gap-6">
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+            <div class="text-3xl font-bold text-blue-600">{{ rfqs|length }}</div>
+            <div class="text-slate-600 dark:text-slate-400">Your RFQs</div>
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+            <div class="text-3xl font-bold text-green-600">{{ matches|length }}</div>
+            <div class="text-slate-600 dark:text-slate-400">Matches</div>
+        </div>
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+            <div class="text-3xl font-bold text-purple-600">{{ user.years_experience or 0 }}</div>
+            <div class="text-slate-600 dark:text-slate-400">Years Experience</div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="grid grid-cols-2 gap-4">
+        <a href="{{ url_for('matching.find_matches') }}" class="bg-blue-600 text-white p-6 rounded-lg hover:bg-blue-700 text-center font-bold">
+            🔍 Find Matches
+        </a>
+        <a href="{{ url_for('rfq.create_rfq') }}" class="bg-green-600 text-white p-6 rounded-lg hover:bg-green-700 text-center font-bold">
+            ➕ Create RFQ
+        </a>
+    </div>
+    
+    <!-- Your Profile -->
+    <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+        <h2 class="text-2xl font-bold mb-4">Your Profile</h2>
+        <div class="grid grid-cols-2 gap-4 mb-4">
+            <div><strong>Role:</strong> {{ user.role.title() }}</div>
+            <div><strong>Company:</strong> {{ user.company or 'N/A' }}</div>
+            <div><strong>Location:</strong> {{ user.location or 'N/A' }}</div>
+            <div><strong>Email:</strong> {{ user.email }}</div>
+        </div>
+        <a href="{{ url_for('profile.complete_profile') }}" class="text-blue-600 hover:underline">Edit Profile →</a>
+    </div>
+</div>
+{% endblock %}

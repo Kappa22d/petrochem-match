@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Create RFQ - PetroChem Match{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8">Create Request for Quote</h1>
+    
+    <form method="POST" class="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg space-y-6">
+        <div>
+            <label class="block text-sm font-medium mb-2">Title *</label>
+            <input type="text" name="title" required placeholder="e.g., High-Performance Corrosion Inhibitor Needed" class="w-full px-4 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600">
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium mb-2">Description</label>
+            <textarea name="description" rows="6" placeholder="Provide detailed information about your requirements..." class="w-full px-4 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600"></textarea>
+        </div>
+        
+        <div>
+            <label class="block text-sm font-medium mb-2">Budget Range</label>
+            <input type="text" name="budget_range" placeholder="e.g., $50k - $100k" class="w-full px-4 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600">
+        </div>
+        
+        <div class="flex items-center">
+            <input type="checkbox" name="anonymous" id="anonymous" class="w-4 h-4 rounded">
+            <label for="anonymous" class="ml-2">Post anonymously</label>
+        </div>
+        
+        <button type="submit" class="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 font-bold text-lg">
+            Create RFQ
+        </button>
+    </form>
+</div>
+{% endblock %}

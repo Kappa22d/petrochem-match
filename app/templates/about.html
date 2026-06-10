@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}About - PetroChem Match{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-8">
+    <h1 class="text-4xl font-bold">About PetroChem Match</h1>
+    
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg space-y-6">
+        <section>
+            <h2 class="text-2xl font-bold mb-3">Our Mission</h2>
+            <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                To revolutionize B2B networking in the oil & gas industry by connecting professionals, operators, engineers, suppliers, and consultants on a global platform. We believe that great innovations happen when the right people meet.
+            </p>
+        </section>
+        
+        <section>
+            <h2 class="text-2xl font-bold mb-3">What We Offer</h2>
+            <ul class="list-disc list-inside space-y-2 text-slate-600 dark:text-slate-400">
+                <li><strong>Smart Matching:</strong> AI-powered compatibility scoring to find your ideal collaborators</li>
+                <li><strong>Professional Directory:</strong> Search and filter by role, expertise, location, and experience</li>
+                <li><strong>RFQ Hub:</strong> Post and respond to requests for quotes seamlessly</li>
+                <li><strong>Engineering Tools:</strong> ESG calculator, chemical lookup, and unit converter</li>
+                <li><strong>Secure Platform:</strong> Enterprise-grade encryption with Supabase</li>
+            </ul>
+        </section>
+        
+        <section>
+            <h2 class="text-2xl font-bold mb-3">Built For Industry Professionals</h2>
+            <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                Whether you're an operator managing offshore assets, a chemical engineer optimizing processes, a specialty supplier showcasing products, or a consultant providing expertise—PetroChem Match connects you with the right opportunities.
+            </p>
+        </section>
+        
+        <section>
+            <h2 class="text-2xl font-bold mb-3">Our Technology</h2>
+            <p class="text-slate-600 dark:text-slate-400 leading-relaxed">
+                Built with Flask, Supabase PostgreSQL, and Tailwind CSS, our platform is designed for reliability, speed, and user experience. All data is encrypted at rest and in transit.
+            </p>
+        </section>
+    </div>
+</div>
+{% endblock %}

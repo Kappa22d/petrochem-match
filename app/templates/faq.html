@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}FAQ - PetroChem Match{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-8">
+    <h1 class="text-4xl font-bold">Frequently Asked Questions</h1>
+    
+    <div class="space-y-4">
+        {% for faq in faqs %}
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+                <h3 class="font-bold text-lg mb-3">{{ faq.question }}</h3>
+                <p class="text-slate-600 dark:text-slate-400">{{ faq.answer }}</p>
+            </div>
+        {% endfor %}
+        
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+            <h3 class="font-bold text-lg mb-3">How do I get started?</h3>
+            <p class="text-slate-600 dark:text-slate-400">Sign up with your email, complete your profile with your role and expertise, and you're ready to connect!</p>
+        </div>
+        
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+            <h3 class="font-bold text-lg mb-3">Is this platform free?</h3>
+            <p class="text-slate-600 dark:text-slate-400">Yes! PetroChem Match is free to use. We believe in democratizing professional networking in the energy sector.</p>
+        </div>
+        
+        <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow">
+            <h3 class="font-bold text-lg mb-3">Can I post anonymously?</h3>
+            <p class="text-slate-600 dark:text-slate-400">Yes, you can post RFQs anonymously if you prefer. Your profile will still be visible when you respond to other opportunities.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

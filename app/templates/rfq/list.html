@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}RFQs - PetroChem Match{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <div class="flex justify-between items-center">
+        <h1 class="text-4xl font-bold">Requests for Quote</h1>
+        {% if session.get('user_id') %}
+            <a href="{{ url_for('rfq.create_rfq') }}" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-bold">+ Create RFQ</a>
+        {% endif %}
+    </div>
+    
+    <!-- Status Filter -->
+    <div class="flex gap-2">
+        <a href="?status=open" class="px-4 py-2 rounded-lg {% if request.args.get('status', 'open') == 'open' %}bg-blue-600 text-white{% else %}bg-slate-200 dark:bg-slate-700{% endif %}">Open</a>
+        <a href="?status=in_progress" class="px-4 py-2 rounded-lg {% if request.args.get('status') == 'in_progress' %}bg-blue-600 text-white{% else %}bg-slate-200 dark:bg-slate-700{% endif %}">In Progress</a>
+        <a href="?status=closed" class="px-4 py-2 rounded-lg {% if request.args.get('status') == 'closed' %}bg-blue-600 text-white{% else %}bg-slate-200 dark:bg-slate-700{% endif %}">Closed</a>
+    </div>
+    
+    <!-- RFQs List -->
+    <div class="space-y-4">
+        {% for rfq in rfqs.items %}
+            <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow hover:shadow-lg transition">
+                <div class="flex justify-between items-start mb-4">
+                    <div>
+                        <h3 class="font-bold text-lg mb-1">{{ rfq.title }}</h3>
+                        <p class="text-slate-600 dark:text-slate-400 text-sm">{% if not rfq.anonymous %}by {{ rfq.author.full_name }}{% else %}Anonymous{% endif %}</p>
+                    </div>
+                    <span class="px-3 py-1 rounded-full text-sm font-semibold 
+                        {% if rfq.status == 'open' %}bg-green-100 text-green-800{% elif rfq.status == 'in_progress' %}bg-yellow-100 text-yellow-800{% else %}bg-slate-100 text-slate-800{% endif %}">
+                        {{ rfq.status.replace('_', ' ').title() }}
+                    </span>
+                </div>
+                
+                <p class="text-slate-600 dark:text-slate-400 mb-3">{{ rfq.description[:150] }}...</p>
+                
+                <div class="flex justify-between items-center">
+                    <div class="text-sm text-slate-500 dark:text-slate-400">{{ rfq.responses|length }} responses</div>
+                    <a href="{{ url_for('rfq.view_rfq', rfq_id=rfq.id) }}" class="text-blue-600 hover:underline font-semibold">View Details →</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Pagination -->
+    {% if rfqs.pages > 1 %}
+        <div class="flex justify-center gap-2">
+            {% for page_num in rfqs.iter_pages() %}
+                {% if page_num %}
+                    <a href="?page={{ page_num }}" class="px-4 py-2 border rounded {% if page_num == rfqs.page %}bg-blue-600 text-white{% else %}hover:bg-slate-100 dark:hover:bg-slate-700{% endif %}">{{ page_num }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

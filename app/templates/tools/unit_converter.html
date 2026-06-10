@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Unit Converter - PetroChem Match{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8">⚖️ Unit Converter</h1>
+    
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg">
+        <form id="converterForm" class="space-y-6">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Value</label>
+                    <input type="number" id="value" step="0.01" placeholder="100" class="w-full px-4 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600">
+                </div>
+                <div class="flex items-end">
+                    <label class="block text-sm font-medium mb-2 w-full">From</label>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <select id="fromUnit" class="px-4 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600">
+                    <option value="kg">Kilograms (kg)</option>
+                    <option value="lbs">Pounds (lbs)</option>
+                    <option value="m3">Cubic Meters (m³)</option>
+                    <option value="bbl">Barrels (bbl)</option>
+                    <option value="celsius">Celsius (°C)</option>
+                    <option value="fahrenheit">Fahrenheit (°F)</option>
+                    <option value="atm">Atmospheres (atm)</option>
+                    <option value="psi">PSI (psi)</option>
+                </select>
+                <select id="toUnit" class="px-4 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600">
+                    <option value="lbs">Pounds (lbs)</option>
+                    <option value="kg">Kilograms (kg)</option>
+                    <option value="bbl">Barrels (bbl)</option>
+                    <option value="m3">Cubic Meters (m³)</option>
+                    <option value="fahrenheit">Fahrenheit (°F)</option>
+                    <option value="celsius">Celsius (°C)</option>
+                    <option value="psi">PSI (psi)</option>
+                    <option value="atm">Atmospheres (atm)</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-bold">
+                Convert
+            </button>
+        </form>
+        
+        <div id="result" class="mt-8 p-6 bg-slate-50 dark:bg-slate-700 rounded-lg hidden">
+            <p class="text-sm text-slate-600 dark:text-slate-400 mb-2">Result</p>
+            <div id="resultText" class="text-3xl font-bold text-green-600"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('converterForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+        value: parseFloat(document.getElementById('value').value),
+        from_unit: document.getElementById('fromUnit').value,
+        to_unit: document.getElementById('toUnit').value
+    };
+    
+    const response = await fetch('{{ url_for("tools.convert_units") }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    
+    const result = await response.json();
+    document.getElementById('resultText').textContent = `${result.result} ${result.to}`;
+    document.getElementById('result').classList.remove('hidden');
+});
+</script>
+{% endblock %}

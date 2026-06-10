@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}ESG Calculator - PetroChem Match{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+    <h1 class="text-4xl font-bold">♻️ ESG/CO₂ Savings Estimator</h1>
+    
+    <div class="grid grid-cols-2 gap-8">
+        <!-- Input Form -->
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-6">Calculate Savings</h2>
+            <form id="esgForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium mb-2">Annual Usage (kg)</label>
+                    <input type="number" id="annualUsage" step="0.01" placeholder="5000" class="w-full px-4 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">Old Emissions Factor (kg CO₂/kg)</label>
+                    <input type="number" id="oldEmissions" step="0.001" placeholder="2.5" class="w-full px-4 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2">New Emissions Factor (kg CO₂/kg)</label>
+                    <input type="number" id="newEmissions" step="0.001" placeholder="1.2" class="w-full px-4 py-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600">
+                </div>
+                <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 font-bold">
+                    Calculate
+                </button>
+            </form>
+        </div>
+        
+        <!-- Results -->
+        <div id="results" class="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900 dark:to-emerald-900 p-8 rounded-lg shadow-lg hidden">
+            <h2 class="text-2xl font-bold mb-6 text-green-800 dark:text-green-100">Results</h2>
+            <div class="space-y-4 text-green-900 dark:text-green-50">
+                <div class="p-4 bg-white dark:bg-slate-800 rounded">
+                    <div class="text-sm text-slate-600 dark:text-slate-400">Current Emissions</div>
+                    <div id="oldTotal" class="text-3xl font-bold">0</div>
+                    <div class="text-xs text-slate-600 dark:text-slate-400">kg CO₂/year</div>
+                </div>
+                <div class="p-4 bg-white dark:bg-slate-800 rounded">
+                    <div class="text-sm text-slate-600 dark:text-slate-400">New Emissions</div>
+                    <div id="newTotal" class="text-3xl font-bold">0</div>
+                    <div class="text-xs text-slate-600 dark:text-slate-400">kg CO₂/year</div>
+                </div>
+                <div class="p-4 bg-green-600 text-white rounded">
+                    <div class="text-sm">CO₂ Reduction</div>
+                    <div id="reduction" class="text-3xl font-bold">0</div>
+                    <div id="percentage" class="text-sm">0%</div>
+                </div>
+                <div class="p-4 bg-white dark:bg-slate-800 rounded">
+                    <div class="text-sm text-slate-600 dark:text-slate-400">Trees Offset</div>
+                    <div id="trees" class="text-3xl font-bold">0</div>
+                    <div class="text-xs text-slate-600 dark:text-slate-400">trees planted equivalent</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('esgForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const data = {
+        annual_usage_kg: parseFloat(document.getElementById('annualUsage').value),
+        old_emissions_factor: parseFloat(document.getElementById('oldEmissions').value),
+        new_emissions_factor: parseFloat(document.getElementById('newEmissions').value)
+    };
+    
+    const response = await fetch('{{ url_for("tools.calculate_esg") }}', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(data)
+    });
+    
+    const result = await response.json();
+    document.getElementById('oldTotal').textContent = result.old_total_emissions.toLocaleString();
+    document.getElementById('newTotal').textContent = result.new_total_emissions.toLocaleString();
+    document.getElementById('reduction').textContent = result.emissions_reduction.toLocaleString();
+    document.getElementById('percentage').textContent = result.reduction_percentage + '%';
+    document.getElementById('trees').textContent = Math.round(result.co2_offset_trees).toLocaleString();
+    document.getElementById('results').classList.remove('hidden');
+});
+</script>
+{% endblock %}

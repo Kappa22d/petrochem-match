@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Chemical Lookup - PetroChem Match{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-4xl font-bold mb-8">🧪 Chemical Property Lookup</h1>
+    
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg">
+        <div class="mb-6">
+            <input type="text" id="chemicalSearch" placeholder="Search by name or CAS number..." class="w-full px-4 py-3 border rounded-lg dark:bg-slate-700 dark:border-slate-600 text-lg">
+        </div>
+        
+        <div id="results" class="space-y-4"></div>
+        <div id="noResults" class="text-center text-slate-600 dark:text-slate-400 py-8">Enter a chemical name or CAS number to search</div>
+    </div>
+</div>
+
+<script>
+let searchTimeout;
+document.getElementById('chemicalSearch').addEventListener('input', async (e) => {
+    clearTimeout(searchTimeout);
+    const query = e.target.value.trim();
+    if (!query) {
+        document.getElementById('results').innerHTML = '';
+        document.getElementById('noResults').style.display = 'block';
+        return;
+    }
+    
+    searchTimeout = setTimeout(async () => {
+        const response = await fetch(`{{ url_for('tools.search_chemical') }}?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';
+        
+        if (data.results.length === 0) {
+            document.getElementById('noResults').textContent = 'No chemicals found';
+            document.getElementById('noResults').style.display = 'block';
+            return;
+        }
+        
+        document.getElementById('noResults').style.display = 'none';
+        
+        data.results.forEach(chem => {
+            const html = `
+                <div class="border-l-4 border-blue-600 pl-4 py-4">
+                    <h3 class="font-bold text-lg">{{ chem.name }}</h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">CAS: ${chem.cas_number || 'N/A'}</p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400">Formula: ${chem.formula || 'N/A'}</p>
+                    <div class="mt-3 space-y-1 text-sm">
+                        ${Object.entries(chem.properties).map(([key, value]) => `<p><strong>${key}:</strong> ${value}</p>`).join('')}
+                    </div>
+                </div>
+            `;
+            resultsDiv.innerHTML += html;
+        });
+    }, 300);
+});
+</script>
+{% endblock %}

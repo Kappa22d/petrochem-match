@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}{{ profile.full_name }} - PetroChem Match{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto">
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg">
+        <div class="flex items-start justify-between mb-6">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">{{ profile.full_name }}</h1>
+                <p class="text-xl text-blue-600 font-semibold">{{ profile.role.title() }}</p>
+            </div>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-6 mb-6">
+            <div>
+                <h3 class="text-sm font-medium text-slate-600 dark:text-slate-400">Company</h3>
+                <p class="text-lg">{{ profile.company or 'N/A' }}</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-medium text-slate-600 dark:text-slate-400">Location</h3>
+                <p class="text-lg">{{ profile.location or 'N/A' }}</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-medium text-slate-600 dark:text-slate-400">Experience</h3>
+                <p class="text-lg">{{ profile.years_experience or 'N/A' }} years</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-medium text-slate-600 dark:text-slate-400">Member Since</h3>
+                <p class="text-lg">{{ profile.created_at.strftime('%B %Y') }}</p>
+            </div>
+        </div>
+        
+        <div class="mb-6">
+            <h3 class="text-lg font-bold mb-3">Bio</h3>
+            <p class="text-slate-600 dark:text-slate-400">{{ profile.bio or 'No bio provided' }}</p>
+        </div>
+        
+        <div>
+            <h3 class="text-lg font-bold mb-3">Expertise</h3>
+            <div class="flex flex-wrap gap-2">
+                {% for tag in profile.expertise_tags %}
+                    <span class="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 px-3 py-1 rounded-full text-sm">
+                        {{ tag }}
+                    </span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

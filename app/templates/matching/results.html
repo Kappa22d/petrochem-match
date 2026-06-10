@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Find Matches - PetroChem Match{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <h1 class="text-4xl font-bold">🎯 Your Matches</h1>
+    <p class="text-lg text-slate-600 dark:text-slate-400">Based on compatibility scoring algorithm</p>
+    
+    {% if matches %}
+        <div class="space-y-4">
+            {% for match in matches %}
+                <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow hover:shadow-lg transition">
+                    <div class="flex justify-between items-start">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-4 mb-3">
+                                <div>
+                                    <h3 class="font-bold text-lg">{{ match.profile.full_name }}</h3>
+                                    <p class="text-blue-600 font-semibold">{{ match.profile.role.title() }}</p>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-4xl font-bold text-green-600">{{ (match.score * 100)|int }}%</div>
+                                    <p class="text-sm text-slate-600 dark:text-slate-400">Match Score</p>
+                                </div>
+                            </div>
+                            <p class="text-slate-600 dark:text-slate-400 mb-2">{{ match.profile.company }} | {{ match.profile.location }}</p>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-3">{{ match.reason }}</p>
+                            <div class="flex flex-wrap gap-2">
+                                {% for tag in match.profile.expertise_tags %}
+                                    <span class="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-xs">{{ tag }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="flex gap-2">
+                            <a href="{{ url_for('profile.view_profile', user_id=match.profile.id) }}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">View</a>
+                            <button hx-post="{{ url_for('matching.save_match', profile_id=match.profile.id) }}" hx-swap="outerHTML" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Save</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-lg shadow text-center">
+            <p class="text-slate-600 dark:text-slate-400 mb-4">No matches found yet. Complete your profile to get better matches!</p>
+            <a href="{{ url_for('profile.complete_profile') }}" class="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700">Complete Profile</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

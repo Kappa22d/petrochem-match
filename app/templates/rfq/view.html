@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{{ rfq.title }} - PetroChem Match{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto space-y-8">
+    <!-- RFQ Details -->
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg">
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h1 class="text-4xl font-bold mb-2">{{ rfq.title }}</h1>
+                <p class="text-slate-600 dark:text-slate-400">Posted {{ rfq.created_at.strftime('%B %d, %Y') }}</p>
+            </div>
+            <span class="px-4 py-2 rounded-full text-sm font-semibold 
+                {% if rfq.status == 'open' %}bg-green-100 text-green-800{% elif rfq.status == 'in_progress' %}bg-yellow-100 text-yellow-800{% else %}bg-slate-100 text-slate-800{% endif %}">
+                {{ rfq.status.replace('_', ' ').title() }}
+            </span>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-6 mb-6 p-6 bg-slate-50 dark:bg-slate-700 rounded-lg">
+            <div>
+                <h3 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Posted By</h3>
+                <p class="text-lg font-semibold">{% if not rfq.anonymous %}<a href="{{ url_for('profile.view_profile', user_id=rfq.author.id) }}" class="text-blue-600 hover:underline">{{ rfq.author.full_name }}</a>{% else %}Anonymous{% endif %}</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-medium text-slate-600 dark:text-slate-400 mb-1">Budget Range</h3>
+                <p class="text-lg font-semibold">{{ rfq.budget_range or 'Not specified' }}</p>
+            </div>
+        </div>
+        
+        <div>
+            <h2 class="text-2xl font-bold mb-4">Details</h2>
+            <p class="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{{ rfq.description }}</p>
+        </div>
+    </div>
+    
+    <!-- Responses -->
+    <div class="bg-white dark:bg-slate-800 p-8 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-6">Responses ({{ rfq.responses|length }})</h2>
+        
+        {% if session.get('user_id') and session.get('user_id') != rfq.user_id|string %}
+            <form method="POST" action="{{ url_for('rfq.respond_to_rfq', rfq_id=rfq.id) }}" class="mb-8 p-6 bg-slate-50 dark:bg-slate-700 rounded-lg">
+                <h3 class="font-bold mb-4">Submit Your Response</h3>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Quote Value</label>
+                        <input type="text" name="quote_value" placeholder="e.g., $50,000" class="w-full px-4 py-2 border rounded-lg dark:bg-slate-600 dark:border-slate-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2">Message</label>
+                        <textarea name="message" rows="4" placeholder="Provide details about your offer..." class="w-full px-4 py-2 border rounded-lg dark:bg-slate-600 dark:border-slate-500"></textarea>
+                    </div>
+                    <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-bold">
+                        Submit Response
+                    </button>
+                </div>
+            </form>
+        {% endif %}
+        
+        <div class="space-y-4">
+            {% for response in rfq.responses %}
+                <div class="border-l-4 border-blue-600 pl-4 py-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <div>
+                            <h4 class="font-bold"><a href="{{ url_for('profile.view_profile', user_id=response.respondent.id) }}" class="text-blue-600 hover:underline">{{ response.respondent.full_name }}</a></h4>
+                            <p class="text-sm text-slate-600 dark:text-slate-400">{{ response.respondent.company }}</p>
+                        </div>
+                        <span class="text-sm text-slate-500 dark:text-slate-400">{{ response.created_at.strftime('%b %d') }}</span>
+                    </div>
+                    {% if response.quote_value %}
+                        <p class="font-semibold text-green-600 mb-2">Quote: {{ response.quote_value }}</p>
+                    {% endif %}
+                    <p class="text-slate-700 dark:text-slate-300">{{ response.message }}</p>
+                </div>
+            {% else %}
+                <p class="text-slate-600 dark:text-slate-400 text-center py-8">No responses yet. Be the first!</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
